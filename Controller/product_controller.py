@@ -1,8 +1,6 @@
 from flask import Blueprint, Flask, request, json, Response
-from Model.user_model import User
 from Model.product_model import Product
 from database import get_db_session
-#from app import app
 
 product_api = Blueprint('product_api', __name__)
 
@@ -14,9 +12,7 @@ def get_product():
   return Response(json.dumps([d.to_dict() for d in products]), status=200, mimetype='application/json')
 
 @product_api.route('/product', methods=['POST'])
-def create_product(): 
-  print('==>', request.form.get('name', ''))
-  print('==>', request.form.get('image', ''))
+def create_product():
   if not 'name' in request.form:
     return Response('name is missing', 400)
 
