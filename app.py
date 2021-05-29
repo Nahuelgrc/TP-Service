@@ -5,8 +5,10 @@ from Model.product_model import Product
 from database import setup_database
 from Controller.product_controller import product_api
 from Controller.user_controller import user_api
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.debug = True
 app.register_blueprint(product_api)
 app.register_blueprint(user_api)
