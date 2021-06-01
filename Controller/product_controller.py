@@ -30,13 +30,11 @@ def create_product():
 
   return Response('Product created', 201)
 
-@product_api.route('/products', methods=['POST'])
-def create_list_products(): 
-  return 2+2
-
 @product_api.route('/products')
-def get_list_products(): 
-  return 2+2
+def list_products(): 
+  s = get_db_session()
+  products = s.query(Product)
+  return Response(json.dumps([u.to_dict() for u in products]), status=200, mimetype='application/json')
 
 @product_api.route('/product', methods=['PATCH'])
 def update_product(): 

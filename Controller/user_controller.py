@@ -68,14 +68,10 @@ def login(args, location="form"):
   s = get_db_session()
   try:
     user = s.query(User).filter(User.username==username, User.password==password).one()
-
     if user != None:
       return Response(json.dumps(user.to_dict()), status=200, mimetype='application/json')
-
-
   except NoResultFound:
     return Response("Unauthorized", 401)
-  
 
 @user_api.route('/user', methods=['POST'])
 @use_args(create_user_request)
@@ -97,6 +93,9 @@ def create_user(args, location="form"):
 def update_user(args, location="form"):
   firstname = args["firstname"]
   lastname = args["lastname"]
+  username = args["username"]
+  password = args["password"]
+  email = args["email"]
   s = get_db_session()
   id = args["id"]
   try:
