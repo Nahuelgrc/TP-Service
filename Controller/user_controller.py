@@ -59,17 +59,20 @@ def get_user(id):
 @user_api.route('/login', methods=['POST'])
 @use_args(login_request)
 def login(args, location="form"):
-  print('HOLA!')
   username = args["username"]
-  print('username', username)
-
   password = args["password"]
-  print('password', password)
   s = get_db_session()
   try:
     user = s.query(User).filter(User.username==username, User.password==password).one()
     if user != None:
-      return Response(json.dumps(user.to_dict()), status=200, mimetype='application/json')
+      return jsonify(
+          id=user.id,
+          username=user.username,
+          email=user.email,
+          firstname=user.firstname,
+          lastname=user.lastname,
+          role=user.role
+      )
   except NoResultFound:
     return Response("Unauthorized", 401)
 
