@@ -28,6 +28,7 @@ update_password_request = {
 update_profile_request = {
   "firstname": fields.Str(required=True, validate=validate.Length(min=1)),
   "lastname": fields.Str(required=True, validate=validate.Length(min=1)),
+  "email": fields.Str(required=True, validate=validate.Length(min=1)),
 }
 
 # Return validation errors as JSON
@@ -94,16 +95,15 @@ def create_user(args, location="form"):
 @user_api.route('/user', methods=['PUT'])
 @use_args(update_profile_request)
 def update_user(args, location="form"):
+  print('lalala')
   firstname = args["firstname"]
   lastname = args["lastname"]
-  username = args["username"]
   password = args["password"]
   email = args["email"]
-  s = get_db_session()
   id = args["id"]
+  s = get_db_session()
   try:
-    user = s.query(User).filter_by(id=id).one()
-    user.username = username
+    user = s.query(User).filter(User.id==id).one()
     user.password = password
     user.email = email
     user.firstname = firstname
