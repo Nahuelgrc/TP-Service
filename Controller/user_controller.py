@@ -1,4 +1,5 @@
 from flask import Blueprint, Flask, request, json, Response, jsonify
+from sqlalchemy.sql.expression import false
 from Model.user_model import User
 from database import get_db_session
 from webargs import fields, validate
@@ -21,14 +22,12 @@ create_user_request = {
   "lastname": fields.Str(required=True, validate=validate.Length(min=1))
 }
 
-update_password_request = {
-  "password": fields.Str(required=True, validate=validate.Length(min=1))
-}
-
 update_profile_request = {
+  "id": fields.Int(required=True),
   "firstname": fields.Str(required=True, validate=validate.Length(min=1)),
   "lastname": fields.Str(required=True, validate=validate.Length(min=1)),
   "email": fields.Str(required=True, validate=validate.Length(min=1)),
+  "password": fields.Str(required=False, validate=validate.Length(min=1))
 }
 
 # Return validation errors as JSON
@@ -94,8 +93,7 @@ def create_user(args, location="form"):
 
 @user_api.route('/user', methods=['PUT'])
 @use_args(update_profile_request)
-def update_user(args, location="form"):
-  print('lalala')
+def update_user(args):
   firstname = args["firstname"]
   lastname = args["lastname"]
   password = args["password"]
