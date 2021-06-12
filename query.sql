@@ -61,7 +61,7 @@ VALUES ('Varios 2', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, se
 'products/Product018.jpg', 444);
 
 INSERT INTO user (username, password, email, firstname, lastname, role)
-VALUES ('admin', 'admin', 'admin@admin.com', 'admin', 'admin', 'admin');
+VALUES ('admin', 'admin', 'admin@admin.com', 'Juan', 'Turbina', 'admin');
 
 INSERT INTO user (username, password, email, firstname, lastname, role)
-VALUES ('user', 'user', 'user@user.com', 'user', 'user', 'user');
+VALUES ('user', 'user', 'user@user.com', 'Emanuel', 'Lafuente', 'user');
