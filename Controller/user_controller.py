@@ -6,8 +6,11 @@ from webargs import fields, validate
 from webargs.flaskparser import use_args
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import and_
+from flask_cors import CORS, cross_origin
 
 user_api = Blueprint('user_api', __name__)
+
+CORS(user_api)
 
 login_request = {
   "username": fields.Str(required=True, validate=validate.Length(min=1)),
@@ -30,21 +33,26 @@ update_profile_request = {
   "password": fields.Str(required=False, validate=validate.Length(min=1))
 }
 
+delete_users_request = {
+  "ids": fields.Field(required=false)
+}
+
 # Return validation errors as JSON
 @user_api.errorhandler(422)
 @user_api.errorhandler(400)
 def handle_error(err):
-    headers = err.data.get("headers", None)
-    messages = err.data.get("messages", ["Invalid request."])
-    if headers:
-        return jsonify({"errors": messages}), err.code, headers
-    else:
-        return jsonify({"errors": messages}), err.code
+  print(err)
+  headers = err.data.get("headers", None)
+  messages = err.data.get("messages", ["Invalid request."])
+  if headers:
+    return jsonify({"errors": messages}), err.code, headers
+  else:
+    return jsonify({"errors": messages}), err.code
 
-@user_api.route('/user')
+@user_api.route('/users')
 def list_user():
   s = get_db_session()
-  users = s.query(User)
+  users = s.query(User).filter(User.role=='user')
   return Response(json.dumps([u.to_dict() for u in users]), status=200, mimetype='application/json')
 
 @user_api.route('/user/<id>')
@@ -111,13 +119,15 @@ def update_user(args):
   except NoResultFound:
     return Response("User does not exist", 404)
 
-@user_api.route('/user/<id>', methods=['DELETE'])
-def delete_user(id):
+@user_api.route('/users', methods=['DELETE'])
+@use_args(delete_users_request)
+def delete_users(args, location="form"):
+  ids = args["ids"]
+  print('LALALALAA', ids)
   s = get_db_session()
   try:
-    user = s.query(User).filter_by(id=id).one()
-    s.delete(user)
+    s.query(User).filter(User.id.in_(ids)).delete()
     s.commit()
-    return Response('User deleted', 200)
+    return Response('Users deleted', 200)
   except NoResultFound:
-    return Response("User does not exist", 404)
+    return Response("Users do not exist", 404)
