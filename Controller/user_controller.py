@@ -5,12 +5,8 @@ from database import get_db_session
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy import and_
-from flask_cors import CORS, cross_origin
 
 user_api = Blueprint('user_api', __name__)
-
-CORS(user_api)
 
 login_request = {
   "username": fields.Str(required=True, validate=validate.Length(min=1)),
@@ -123,7 +119,6 @@ def update_user(args):
 @use_args(delete_users_request)
 def delete_users(args, location="form"):
   ids = args["ids"]
-  print('LALALALAA', ids)
   s = get_db_session()
   try:
     s.query(User).filter(User.id.in_(ids)).delete()
