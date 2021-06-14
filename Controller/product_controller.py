@@ -8,6 +8,13 @@ from sqlalchemy.orm.exc import NoResultFound
 
 product_api = Blueprint('product_api', __name__)
 
+create_product_request = {
+  "name": fields.Str(required=True, validate=validate.Length(min=1)),
+  "description": fields.Str(required=True, validate=validate.Length(min=1)),
+  "imageSrc": fields.Str(required=True, validate=validate.Length(min=1)),
+  "price": fields.Float(required=True)
+}
+
 delete_products_request = {
   "ids": fields.Field(required=false)
 }
@@ -16,26 +23,19 @@ delete_products_request = {
 def get_product(): 
   s = get_db_session()
   products = s.query(Product)
-  print(products)
   return Response(json.dumps([d.to_dict() for d in products]), status=200, mimetype='application/json')
 
 @product_api.route('/product', methods=['POST'])
-def create_product():
-  if not 'name' in request.form:
-    return Response('name is missing', 400)
-
-  name = request.form.get('name', '')
-  if name == '':
-    return Response('{"error-message":"name cannot be empty"}', status=400, mimetype='application/json')
-  image = request.form.get('image', '')
-  description = request.form.get('description', '')
-
-  product = Product(name, description, image)
-
+@use_args(create_product_request)
+def create_product(args, location="form"):
+  name = args["name"]
+  description = args["description"]
+  imageSrc = args["imageSrc"]
+  price = args["price"]
+  product = Product(name, description, imageSrc, price)
   s = get_db_session()
   s.add(product)
   s.commit()
-
   return Response('Product created', 201)
 
 @product_api.route('/products')
