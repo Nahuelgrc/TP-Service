@@ -65,3 +65,18 @@ VALUES ('admin', 'admin', 'admin@admin.com', 'Juan', 'Turbina', 'admin');
 
 INSERT INTO user (username, password, email, firstname, lastname, role)
 VALUES ('user', 'user', 'user@user.com', 'Emanuel', 'Lafuente', 'user');
+
+INSERT INTO user (username, password, email, firstname, lastname, role)
+VALUES ('user2', 'user', 'user2@user.com', 'Yanina', 'Suarez', 'user');
+
+INSERT INTO user (username, password, email, firstname, lastname, role)
+VALUES ('user3', 'user', 'user3@user.com', 'Esteban', 'Smith', 'user');
+
+INSERT INTO user (username, password, email, firstname, lastname, role)
+VALUES ('user4', 'user', 'user4@user.com', 'Adam', 'Veri', 'user');
+
+INSERT INTO user (username, password, email, firstname, lastname, role)
+VALUES ('user5', 'user', 'user5@user.com', 'Lázaro', 'Fuentes', 'user');
+
+INSERT INTO user (username, password, email, firstname, lastname, role)
+VALUES ('user6', 'user', 'user6@user.com', 'Jorge', 'Sevilla', 'user');

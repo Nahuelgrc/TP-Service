@@ -13,5 +13,5 @@ class Product(Base, ToDict):
   def __init__(self, name, description, imageSrc, price):
       self.name = name
       self.description = description
-      self.imageSrc = imageSrc,
+      self.imageSrc = imageSrc
       self.price = price
