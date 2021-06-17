@@ -7,15 +7,14 @@ from webargs.flaskparser import use_args
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import and_
 from Utils import utils
+from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
 
 transaction_api = Blueprint('transaction_api', __name__)
 
 create_transaction_request = {
-  "user_id": fields.Int(required=True, validate=lambda val: val > 0),
-  "product_id": fields.Int(required=True,  validate=lambda val: val > 0),
-  "creation_date": fields.Str(required=True, validate=validate.Length(min=1)),
-  "quantity": fields.Int(required=True, validate=lambda val: val > 0),
-  "unit_price": fields.Str(required=True, validate=validate.Length(min=1))
+  "user_id": fields.Int(required=True),
+  "cart": fields.Field(required=True)
 }
 
 # Return validation errors as JSON
@@ -57,27 +56,26 @@ def get_transactions_by_user(id):
 @use_args(create_transaction_request)
 def create_transaction(args, location="form"):
   user_id = args["user_id"]
-  product_id = args["product_id"]
-  creation_date = args["creation_date"]
-  quantity = args["quantity"]
-  unit_price = args["unit_price"]
-  
+  cart = args["cart"]
+  s = get_db_session()
   try:
-    transaction = Transaction(
-      user_id, 
-      product_id, 
-      utils.Converter.stringToDatetime(creation_date), 
-      quantity, 
-      float(unit_price)
-      )
-    s = get_db_session()
-    s.add(transaction)
+    for product in cart:
+      print("product =>", product)
+      transaction = Transaction(
+        user_id, 
+        product["id"], 
+        datetime.now(), 
+        product["quantity"], 
+        product["price"])
+      print("transaction ==>", transaction)
+      s.add(transaction)
     s.commit()
-    return Response('transaction created', 201)
+    return Response('transactions created', 201)
   except ValueError:
     return Response("incorrect format", 500)
-  except:
-    return Response("transaction cannot be created", 500)
+  except SQLAlchemyError as e:
+    reason=str(e)
+    print(reason)
 
 @transaction_api.route('/transaction/<id>', methods=['DELETE'])
 def delete_transaction(id):
