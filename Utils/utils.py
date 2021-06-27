@@ -10,8 +10,10 @@ class ToDict():
     #return { col.name: getattr(self, col.name) for col in self.__table__.columns }
 
 class Converter():
+  @staticmethod
   def stringToDatetime(datetime_string):
     return datetime.strptime(datetime_string, "%Y-%m-%d %H:%M:%S")
 
+  @staticmethod
   def datetimeToString(datetime:datetime):
     return datetime.strftime("%Y-%m-%d %H:%M:%S")

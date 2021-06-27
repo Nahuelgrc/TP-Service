@@ -1,3 +1,4 @@
+from ViewModel.transaction_admin_view_model import TransactionAdminViewModel
 from flask import Blueprint, Flask, request, json, Response, jsonify
 from sqlalchemy.sql.expression import false
 from Model.transaction_model import Transaction
@@ -34,6 +35,30 @@ def list_transaction():
   transactions = s.query(Transaction)
   return Response(json.dumps([u.to_dict() for u in transactions]), status=200, mimetype='application/json')
 
+
+@transaction_api.route('/transactions/admin')
+def list_transactions_admin():
+  s = get_db_session()
+  try:
+    transactions = s.query(Transaction)
+    result = []
+    for t in transactions:
+      newItem = TransactionAdminViewModel() 
+      newItem.id = t.id
+      newItem.creation_date = utils.Converter().datetimeToString(t.creation_date)
+      newItem.quantity = t.quantity
+      newItem.total = t.quantity * t.unit_price
+      newItem.product_id = t.product_id
+      newItem.product_name = t.product.name
+      newItem.product_imageSrc = t.product.imageSrc
+      newItem.user_id = t.user_id
+      newItem.user_username = t.user.username
+      result.append(newItem)
+    return Response(json.dumps([u.__dict__ for u in result]), status=200, mimetype='application/json')
+    
+  except NoResultFound:
+    return Response("transactions do not exist", 404)  
+
 @transaction_api.route('/transaction/<id>')
 def get_transaction(id):
   s = get_db_session()
@@ -60,14 +85,12 @@ def create_transaction(args, location="form"):
   s = get_db_session()
   try:
     for product in cart:
-      print("product =>", product)
       transaction = Transaction(
         user_id, 
         product["id"], 
         datetime.now(), 
         product["quantity"], 
         product["price"])
-      print("transaction ==>", transaction)
       s.add(transaction)
     s.commit()
     return Response('transactions created', 201)
