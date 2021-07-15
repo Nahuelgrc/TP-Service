@@ -44,11 +44,6 @@ def list_products():
   products = s.query(Product)
   return Response(json.dumps([u.to_dict() for u in products]), status=200, mimetype='application/json')
 
-@product_api.route('/product', methods=['PATCH'])
-def update_product(): 
-    return 2+2
-
-
 @product_api.route('/products', methods=['DELETE'])
 @use_args(delete_products_request)
 def delete_products(args, location="form"):
